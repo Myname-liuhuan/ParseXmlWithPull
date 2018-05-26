@@ -54,19 +54,21 @@ public class MainActivity extends AppCompatActivity {
     private void parseXmlUsePull(String xmlData){
         try{
             XmlPullParserFactory xmlPullParserFactory=XmlPullParserFactory.newInstance();
-            XmlPullParser xmlPullParser=xmlPullParserFactory.newPullParser();
-            xmlPullParser.setInput(new StringReader(xmlData));
-            int eventType=xmlPullParser.getEventType();
+            XmlPullParser xmlPullParser=xmlPullParserFactory.newPullParser();//得到解析器对象
+            xmlPullParser.setInput(new StringReader(xmlData));//使用给定的方法接收数据
+            int eventType=xmlPullParser.getEventType();//得到当前所处的 事件类型
+            //事件就是:每一个部分都算作不同的事件
+            //eg:<app>PullThings</app>   这个语句含有三个事件
             String id="";
             String name="";
             String version="";
-            int count=0;
-            while(eventType!=xmlPullParser.END_DOCUMENT){
-                String nodeName=xmlPullParser.getName();
+            int count=0;//计算循环的次数，方便理解原理
+            while(eventType!=xmlPullParser.END_DOCUMENT){//当解析器指到文档最后的时候跳出循环
+                String nodeName=xmlPullParser.getName();//eg:id name version String类型
                 switch(eventType){
-                    case XmlPullParser.START_TAG:{
+                    case XmlPullParser.START_TAG:{//eg:<apps> <app> <id>
                         if("id".equals(nodeName)){
-                            id=xmlPullParser.nextText();
+                            id=xmlPullParser.nextText();//当下一个事件是text则返回这个text,不是text就返回空
                         }else if("name".equals(nodeName)){
                             name= xmlPullParser.nextText();
                         }else if ("version".equals(nodeName)){
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                     }
-                    case XmlPullParser.END_TAG:{
+                    case XmlPullParser.END_TAG:{//eg:</apps> </app> </id>
                         if ("app".equals(nodeName)){
                             Log.d("huan","id is:"+id);
                             Log.d("huan","name is:"+name);
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     default:
                         break;
                 }
-                eventType=xmlPullParser.next();
+                eventType=xmlPullParser.next();//next()表示的是下一个事件，可以从循环次数以及源文件的事件数得到，两者相差1，就是最后的一次由于不满足条件所以跳出循环
                 count++;
                 Log.d("count",String.valueOf(count));
             }
